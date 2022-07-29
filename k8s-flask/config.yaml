@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flaskweb-deployment
+  labels:
+    app: flaskweb
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: flaskweb
+  template:
+    metadata:
+      labels:
+        app: flaskweb
+    spec:
+      containers:
+      # Custom docker image
+        - name: flaskweb
+          image: tim5672s/k8s-flask:latest
+          ports:
+            - containerPort: 5000
+
+
+# --- = New config file
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-service
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: flaskweb
+    # External service to make it accesibl from outside
+  type: LoadBalancer
